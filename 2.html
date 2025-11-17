@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级成员地域分布（福建6县版）</title>
+    <!-- 引入Bootstrap（简化依赖，只保留必要样式） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 简化样式：去掉复杂阴影、动画，保留基础布局 */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-right: 1px solid #ddd;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        /* 图片简化：去掉hover放大、阴影，只保留基础适配 */
+        .region-img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        /* 导航简化：去掉多余装饰 */
+        .nav-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0d6efd;
+        }
+        .list-group-item {
+            border: 0;
+            padding: 10px 0;
+        }
+        .list-group-item a {
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧导航栏（简化版） -->
+    <div class="sidebar">
+        <div class="nav-title">班级地域分布</div>
+        <!-- 简化折叠面板为普通列表 -->
+        <div>
+            <h6 class="text-primary mb-2">福建省6个县级地区</h6>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="#siming" onclick="showRegion('厦门市思明区')">厦门市思明区</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#jinan" onclick="showRegion('福州市晋安区')">福州市晋安区</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#longhai" onclick="showRegion('漳州市龙海区')">漳州市龙海区</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#jinjiang" onclick="showRegion('泉州市晋江市')">泉州市晋江市</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#licheng" onclick="showRegion('莆田市荔城区')">莆田市荔城区</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#xiapu" onclick="showRegion('宁德市霞浦县')">宁德市霞浦县</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 右侧内容区（简化版） -->
+    <div class="content">
+        <!-- 默认欢迎页面 -->
+        <div id="default-content">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h2 class="text-primary">班级成员地域分布</h2>
+                    <p class="text-muted mt-2">点击左侧地区，查看对应班级成员</p>
+                    <img src="images/scenery/fujian_overview.jpg" alt="福建风景" class="region-img">
+                </div>
+            </div>
+        </div>
+
+        <!-- 地区内容块（删除地区介绍） -->
+        <div id="region-content" class="d-none">
+            <div class="card">
+                <!-- 简化标题栏 -->
+                <div class="card-header bg-primary text-white">
+                    <h3 id="region-title" class="h5 mb-0"></h3>
+                </div>
+                <div class="card-body">
+                    <!-- 只保留图片和表格 -->
+                    <img id="region-photo" src="" alt="地区风景" class="region-img">
+                    <p id="photo-caption" class="text-center text-muted"></p>
+
+                    <h5 class="mt-3">班级成员名单</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">序号</th>
+                                    <th class="text-center">姓名</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 同学分配数据（保留核心，结构简化）
+        const studentData = {
+            "厦门市思明区": ["李展文", "陈佳炜", "丁心园", "吴海浩", "王兴瀚", "蔡双宜", "李岩煌", "杨鸿涛", "陈彤", "蔡雨舟", "叶鑫"],
+            "福州市晋安区": ["黄翊宸", "郑育晗", "李逸涵", "黄文德", "方韵烨", "衡菁", "武伊妮", "徐润钰", "赖凌锋", "林子岩", "苏添毅"],
+            "漳州市龙海区": ["陈嘉瑜", "陈志雄", "文靖淇", "吴杰宸", "张蕾", "洪捷威", "郑炼如", "薛静姝", "傅晨熠", "曾秋洁"],
+            "泉州市晋江市": ["兰丞纬", "林婧萱", "郭畅", "范俊豪", "麦丁丁", "陈正恩", "张禾雨贝", "黄佳怡", "刘祥昊", "刘逍"],
+            "莆田市荔城区": ["柏颗欣", "魏立秀", "周语君", "蓝书恒", "欧栎芳", "郑芷垚", "郭陈雨乐", "刘治凡", "张佳音", "余蕾"],
+            "宁德市霞浦县": ["杨海桢", "杨飞鹏", "胡源鑫", "陈家骏", "黄煜君", "李芯颖", "陈强", "徐凌灏", "刘俊宏", "苏佳琪"]
+        };
+
+        // 2. 地区图片配置（删除地区介绍，只保留图片和说明）
+        const regionConfig = {
+            "厦门市思明区": {
+                photo: "images/scenery/xiamen_siming.jpg",
+                caption: "厦门思明区风景"
+            },
+            "福州市晋安区": {
+                photo: "images/scenery/fuzhou_jinan.jpg",
+                caption: "福州晋安区风景"
+            },
+            "漳州市龙海区": {
+                photo: "images/scenery/zhangzhou_longhai.jpg",
+                caption: "漳州龙海区风景"
+            },
+            "泉州市晋江市": {
+                photo: "images/scenery/quanzhou_jinjiang.jpg",
+                caption: "泉州晋江市风景"
+            },
+            "莆田市荔城区": {
+                photo: "images/scenery/putian_licheng.jpg",
+                caption: "莆田荔城区风景"
+            },
+            "宁德市霞浦县": {
+                photo: "images/scenery/ningde_xiapu.jpg",
+                caption: "宁德霞浦县风景"
+            }
+        };
+
+        // 3. 简化核心函数
+        function showRegion(regionName) {
+            // 切换显示状态
+            document.getElementById("default-content").classList.add("d-none");
+            const regionContent = document.getElementById("region-content");
+            regionContent.classList.remove("d-none");
+
+            // 填充数据
+            const config = regionConfig[regionName];
+            const students = studentData[regionName];
+
+            document.getElementById("region-title").textContent = regionName + "（共" + students.length + "人）";
+            document.getElementById("region-photo").src = config.photo;
+            document.getElementById("photo-caption").textContent = config.caption;
+
+            // 填充同学名单
+            const studentList = document.getElementById("student-list");
+            studentList.innerHTML = "";
+            students.forEach((name, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td class="text-center">${name}</td>
+                `;
+                studentList.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
