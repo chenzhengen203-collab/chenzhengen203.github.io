@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>班级成员地域分布（福建6县版）</title>
-    <!-- 引入Bootstrap（简化依赖，只保留必要样式） -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* 简化样式：去掉复杂阴影、动画，保留基础布局 */
         .sidebar {
             width: 240px;
             height: 100vh;
@@ -23,14 +21,12 @@
             padding: 20px;
             min-height: 100vh;
         }
-        /* 图片简化：去掉hover放大、阴影，只保留基础适配 */
         .region-img {
             width: 100%;
             height: auto;
             border-radius: 5px;
             margin: 10px 0;
         }
-        /* 导航简化：去掉多余装饰 */
         .nav-title {
             text-align: center;
             font-weight: bold;
@@ -48,10 +44,8 @@
     </style>
 </head>
 <body>
-    <!-- 左侧导航栏（简化版） -->
     <div class="sidebar">
         <div class="nav-title">班级地域分布</div>
-        <!-- 简化折叠面板为普通列表 -->
         <div>
             <h6 class="text-primary mb-2">福建省6个县级地区</h6>
             <ul class="list-group list-group-flush">
@@ -77,9 +71,7 @@
         </div>
     </div>
 
-    <!-- 右侧内容区（简化版） -->
     <div class="content">
-        <!-- 默认欢迎页面 -->
         <div id="default-content">
             <div class="card">
                 <div class="card-body text-center">
@@ -90,15 +82,12 @@
             </div>
         </div>
 
-        <!-- 地区内容块（删除地区介绍） -->
         <div id="region-content" class="d-none">
             <div class="card">
-                <!-- 简化标题栏 -->
                 <div class="card-header bg-primary text-white">
                     <h3 id="region-title" class="h5 mb-0"></h3>
                 </div>
                 <div class="card-body">
-                    <!-- 只保留图片和表格 -->
                     <img id="region-photo" src="" alt="地区风景" class="region-img">
                     <p id="photo-caption" class="text-center text-muted"></p>
 
@@ -121,7 +110,7 @@
     </div>
 
     <script>
-        // 1. 同学分配数据（保留核心，结构简化）
+        // 1. 同学分配数据
         const studentData = {
             "厦门市思明区": ["李展文", "陈佳炜", "丁心园", "吴海浩", "王兴瀚", "蔡双宜", "李岩煌", "杨鸿涛", "陈彤", "蔡雨舟", "叶鑫"],
             "福州市晋安区": ["黄翊宸", "郑育晗", "李逸涵", "黄文德", "方韵烨", "衡菁", "武伊妮", "徐润钰", "赖凌锋", "林子岩", "苏添毅"],
@@ -131,7 +120,7 @@
             "宁德市霞浦县": ["杨海桢", "杨飞鹏", "胡源鑫", "陈家骏", "黄煜君", "李芯颖", "陈强", "徐凌灏", "刘俊宏", "苏佳琪"]
         };
 
-        // 2. 地区图片配置（删除地区介绍，只保留图片和说明）
+        // 2. 地区图片配置
         const regionConfig = {
             "厦门市思明区": {
                 photo: "images/scenery/xiamen_siming.jpg",
@@ -159,7 +148,6 @@
             }
         };
 
-        // 3. 简化核心函数
         function showRegion(regionName) {
             // 切换显示状态
             document.getElementById("default-content").classList.add("d-none");
